@@ -3,6 +3,7 @@ from browser_game_engine.scheduler import Scheduler, Schedule, TaskDefinition
 from browser_game_engine.users import Users, User
 from browser_game_engine.characters import Characters, Character
 from browser_game_engine.travelling import TravellingModule, LocationDefinition, PathDefinition
+from browser_game_engine.exploration import ExplorationModule, ItemOccurrence, ExplorationAreaDefinition, LocationsToExplorationAreasMapping
 from browser_game_engine.items import Items, ItemDefinition, Rarity
 from browser_game_engine.crafting import CraftingSystem, RecipeDescription
 from browser_game_engine.supporting_models import Cost
@@ -115,9 +116,20 @@ system = System(
             PathDefinition('ponyland_kindergarden', 'ponyland_woods', cost=Cost(action_points=10))
         ]
     ),
+    exploration=ExplorationModule(
+        area_definitions=[ExplorationAreaDefinition('normal_forest_area', 'Forest', [
+            ItemOccurrence('strawberry', 0.6, max_amount_per_search=3),
+            ItemOccurrence('mushroom', 0.2, max_amount_per_search=2)
+        ], Cost(action_points=2))],
+        mappings=[
+            LocationsToExplorationAreasMapping('ponyland_woods', ['normal_forest_area'])
+        ]
+    ),
     items=Items([
         ItemDefinition('apple', 'Apple', 'food', Rarity.COMMON, 2),
-        ItemDefinition('apple_juice', 'Apple Juice', 'food', Rarity.UNCOMMON, 6)
+        ItemDefinition('apple_juice', 'Apple Juice', 'food', Rarity.UNCOMMON, 6),
+        ItemDefinition('strawberry', 'Strawberry', 'food', Rarity.COMMON, 1),
+        ItemDefinition('mushroom', 'Mushroom', 'food', Rarity.COMMON, 2)
     ]),
     crafting_system=CraftingSystem([
         RecipeDescription(['apple', 'apple'], ['apple_juice'], 2, 0.99)
