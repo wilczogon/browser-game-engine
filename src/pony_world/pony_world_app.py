@@ -1,11 +1,11 @@
-from browser_game_system import System, db, Unauthorized, BadRequest
-from browser_game_system.scheduler import Scheduler, Schedule, TaskDefinition
-from browser_game_system.users import Users, User
-from browser_game_system.characters import Characters, Character
-from browser_game_system.travelling import TravellingModule, LocationDefinition, PathDefinition
-from browser_game_system.items import Items, ItemDefinition, Rarity
-from browser_game_system.crafting import CraftingSystem, RecipeDescription
-from browser_game_system.supporting_models import Cost
+from browser_game_engine import System, db, Unauthorized, BadRequest
+from browser_game_engine.scheduler import Scheduler, Schedule, TaskDefinition
+from browser_game_engine.users import Users, User
+from browser_game_engine.characters import Characters, Character
+from browser_game_engine.travelling import TravellingModule, LocationDefinition, PathDefinition
+from browser_game_engine.items import Items, ItemDefinition, Rarity
+from browser_game_engine.crafting import CraftingSystem, RecipeDescription
+from browser_game_engine.supporting_models import Cost
 from sqlalchemy import Column, Integer, String, Float, Boolean
 
 
@@ -52,8 +52,8 @@ def authenticate(username, password):
 
 
 class Pony(Character):
-    _PROTECTED_FIELDS = Character._PROTECTED_FIELDS + ['strength', 'action_points']
-    _PRIVATE_FIELDS = Character._PRIVATE_FIELDS + ['strength', 'action_points']
+    _PROTECTED_FIELDS = Character._PROTECTED_FIELDS + ['species', 'strength', 'action_points']
+    _PRIVATE_FIELDS = Character._PRIVATE_FIELDS + ['species', 'strength', 'action_points']
 
     species = Column(String(16))
     strength = Column(Integer, default=1)
