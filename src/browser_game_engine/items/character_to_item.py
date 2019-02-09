@@ -5,9 +5,8 @@ from browser_game_engine.system_db import db
 class UserToItem(db.Model):
     __tablename__ = 'users_to_items'
 
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer)
-    item_id = Column(String(32))
+    user_id = Column(Integer, primary_key=True)
+    item_id = Column(String(32), primary_key=True)
     item_amount = Column(Integer)
 
     # def __repr__(self):
