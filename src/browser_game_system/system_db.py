@@ -1,0 +1,1 @@
+from browser_game_system.system import db, app
