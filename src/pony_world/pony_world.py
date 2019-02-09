@@ -75,10 +75,15 @@ def game_loop():
             elif choice == 2:
                 pass
             elif choice == 3:
+                character_info = get_character_info()
                 print('Destination:')
-                print('TODO')
-                choice = input('>> ')
-                destination = 'TODO'
+                c = 1
+                for conn in character_info['connected_paths']:
+                    print('{}) {}'.format(c, conn['location_name']))
+                    c += 1
+                choice = int(input('>> '))
+                conn = character_info['connected_paths'][choice-1]
+                destination = conn['location_id']
                 travel(destination)
             elif choice == 4:
                 logout()
