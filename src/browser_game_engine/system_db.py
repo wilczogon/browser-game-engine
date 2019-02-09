@@ -1,1 +1,1 @@
-from browser_game_system.system import db, app
+from browser_game_engine.system import db, app

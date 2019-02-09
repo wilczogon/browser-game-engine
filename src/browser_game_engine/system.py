@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 
 class System:
-    def __init__(self, db_uri, root_path, scheduler, users, characters, travelling, items, crafting_system):
+    def __init__(self, db_uri, root_path, scheduler, users, characters, travelling, exploration, items, crafting_system):
         app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
         db.init_app(app)
         self.push_context()
@@ -25,6 +25,9 @@ class System:
 
         self.travelling = travelling
         self.travelling.set_system(self)
+
+        self.exploration = exploration
+        self.exploration.set_system(self)
 
         self.items = items
         self.items.set_system(self)

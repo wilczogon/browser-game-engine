@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from browser_game_system.system_db import db
+from browser_game_engine.system_db import db
 
 
 class UserToItem(db.Model):

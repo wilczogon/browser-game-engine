@@ -1,4 +1,4 @@
-from browser_game_system import db, BadRequest
+from browser_game_engine import db, BadRequest
 
 
 class Cost:
@@ -22,3 +22,7 @@ class Cost:
             character.__setattr__(parameter_name, character.__class__.__dict__[parameter_name] - self.other_costs[parameter_name])
 
         db.session.commit()
+
+    def to_json(self):
+        json_cost = {'item_cost': self.item_cost, **self.other_costs}
+        return {key: json_cost[key] for key in json_cost if json_cost[key] is not None}

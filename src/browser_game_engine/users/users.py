@@ -1,4 +1,4 @@
-from browser_game_system import SystemModule, app, Unauthorized, error_handling, ApiError, BadRequest
+from browser_game_engine import SystemModule, app, Unauthorized, error_handling, ApiError, BadRequest
 from .user_states import UserStates
 from .user_roles import UserRoles
 import json

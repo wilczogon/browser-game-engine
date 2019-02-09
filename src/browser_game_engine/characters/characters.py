@@ -1,4 +1,4 @@
-from browser_game_system import SystemModule, app, db, error_handling, BadRequest, Unauthorized
+from browser_game_engine import SystemModule, app, db, error_handling, BadRequest, Unauthorized
 from .character_states import CharacterStates
 from flask import jsonify, request
 import json
@@ -15,16 +15,16 @@ class Characters(SystemModule):
         @self.system.users.auth
         def get_characters(user):
             db.session.commit()
-            return jsonify({'characters': [character.get_public_json() for character in self.character_class.query.all()]})
+            return jsonify({'characters': [character.get_public_json(self.system) for character in self.character_class.query.all()]})
 
         def _get_character(user, character_id):
             db.session.commit()
             character = self.character_class.query.filter_by(id=character_id).first()
 
             if character.user_id == user.id:
-                return jsonify(character.get_protected_json())
+                return jsonify(character.get_protected_json(self.system))
             else:
-                return jsonify(character.get_public_json())
+                return jsonify(character.get_public_json(self.system))
 
         @app.route(self.system.root_path + "/characters/<int:character_id>")
         @error_handling

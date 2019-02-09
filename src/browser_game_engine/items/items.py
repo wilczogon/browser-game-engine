@@ -1,4 +1,4 @@
-from browser_game_system.system_module import SystemModule
+from browser_game_engine.system_module import SystemModule
 
 
 class Items(SystemModule):

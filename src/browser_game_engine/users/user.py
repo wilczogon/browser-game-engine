@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime
-from browser_game_system.system_db import db
+from browser_game_engine.system_db import db
 import datetime
 from .user_states import UserStates
 from .user_roles import UserRoles
