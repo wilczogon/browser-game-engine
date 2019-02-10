@@ -8,8 +8,8 @@ class Character(db.Model):
     __tablename__ = 'characters'
 
     _PUBLIC_FIELDS = ['id', 'name', 'created_at', 'state']
-    _PROTECTED_FIELDS = ['id', 'name', 'created_at', 'state', 'location', 'connected_paths']
-    _PRIVATE_FIELDS = ['id', 'user_id', 'name', 'created_at', 'state', 'location', 'connected_paths']
+    _PROTECTED_FIELDS = ['id', 'name', 'created_at', 'state', 'location', 'connected_paths', 'items']
+    _PRIVATE_FIELDS = ['id', 'user_id', 'name', 'created_at', 'state', 'location', 'connected_paths', 'items']
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, nullable=False)
@@ -23,6 +23,7 @@ class Character(db.Model):
         cloned['location'] = system.travelling.location_lookup[self.location].to_json()
         els = list(cloned.items())
         els.append(('connected_paths', system.travelling.get_connected_paths_json(self)))
+        els.append(('items', system.items.get_items_json(self)))
         return dict(list(filter(lambda x: x[0] in fields, els)))
 
     def get_public_json(self, system):

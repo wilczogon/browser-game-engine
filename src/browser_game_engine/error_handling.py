@@ -34,3 +34,8 @@ class Unauthorized(ApiError):
 class BadRequest(ApiError):
     def __init__(self, msg='Invalid request.'):
         ApiError.__init__(self, 400, msg)
+
+
+class InternalServerError(ApiError):
+    def __init__(self, msg='Internal server error.'):
+        ApiError.__init__(self, 500, msg)

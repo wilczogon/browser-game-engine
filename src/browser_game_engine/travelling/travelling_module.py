@@ -65,6 +65,6 @@ class TravellingModule(SystemModule):
     def travel(self, character, destination_id):
         path_definition = self.get_path_definition(character, destination_id)
 
-        path_definition.cost.pay(character)
+        path_definition.cost.pay(self.system, character)
         character.location = destination_id
         db.session.commit()

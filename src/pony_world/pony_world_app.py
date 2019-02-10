@@ -117,7 +117,7 @@ system = System(
         ]
     ),
     exploration=ExplorationModule(
-        area_definitions=[ExplorationAreaDefinition('normal_forest_area', 'Forest', [
+        area_definitions=[ExplorationAreaDefinition('normal_forest_area', 'forest', 'Forest', [
             ItemOccurrence('strawberry', 0.6, max_amount_per_search=3),
             ItemOccurrence('mushroom', 0.2, max_amount_per_search=2)
         ], Cost(action_points=2))],

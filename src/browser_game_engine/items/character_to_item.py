@@ -2,10 +2,10 @@ from sqlalchemy import Column, Integer, String
 from browser_game_engine.system_db import db
 
 
-class UserToItem(db.Model):
-    __tablename__ = 'users_to_items'
+class CharacterToItem(db.Model):
+    __tablename__ = 'characters_to_items'
 
-    user_id = Column(Integer, primary_key=True)
+    character_id = Column(Integer, primary_key=True)
     item_id = Column(String(32), primary_key=True)
     item_amount = Column(Integer)
 

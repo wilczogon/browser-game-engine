@@ -5,3 +5,6 @@ class ItemDefinition:
         self.category = category
         self.rarity = rarity
         self.shop_price = shop_price
+
+    def to_json(self):
+        return dict(self.__dict__.items())
