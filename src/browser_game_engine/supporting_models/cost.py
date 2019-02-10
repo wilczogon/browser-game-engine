@@ -7,8 +7,9 @@ class Cost:
         self.other_costs = other_costs
 
     def check(self, system, character):
-        for item_id in self.item_cost:
-            system.items.check_amount(character, item_id, 1)
+        if self.item_cost is not None:
+            for item_id in self.item_cost:
+                system.items.check_amount(character, item_id, 1)
 
         for parameter_name in self.other_costs:
             if character.__dict__[parameter_name] < self.other_costs[parameter_name]:
@@ -17,8 +18,9 @@ class Cost:
     def pay(self, system, character):
         self.check(system, character)
 
-        for item_id in self.item_cost:
-            system.items.remove_item(character, item_id, 1)
+        if self.item_cost is not None:
+            for item_id in self.item_cost:
+                system.items.remove_item(character, item_id, 1)
 
         for parameter_name in self.other_costs:
             character.__setattr__(parameter_name, character.__class__.__dict__[parameter_name] - self.other_costs[parameter_name])

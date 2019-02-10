@@ -17,20 +17,11 @@ class Characters(SystemModule):
             db.session.commit()
             return jsonify({'characters': [character.get_public_json(self.system) for character in self.character_class.query.all()]})
 
-        def _get_character(user, character_id):
-            db.session.commit()
-            character = self.character_class.query.filter_by(id=character_id).first()
-
-            if character.user_id == user.id:
-                return jsonify(character.get_protected_json(self.system))
-            else:
-                return jsonify(character.get_public_json(self.system))
-
         @app.route(self.system.root_path + "/characters/<int:character_id>")
         @error_handling
         @self.system.users.auth
         def get_character(user, character_id):
-            return _get_character(user, character_id)
+            return jsonify(self.get_character_json(user, character_id))
 
         @app.route(self.system.root_path + "/characters", methods=['POST'])
         @error_handling
@@ -52,7 +43,7 @@ class Characters(SystemModule):
             user.last_character_id = character.id
             db.session.commit()
 
-            return _get_character(user, character.id)
+            return jsonify(self.get_character_json(user, character.id))
 
         @app.route(self.system.root_path + "/characters/<int:character_id>", methods=['PATCH'])
         @error_handling
@@ -68,4 +59,13 @@ class Characters(SystemModule):
             if 'location' in data:
                 self.system.travelling.travel(character, data['location'])
 
-            return _get_character(user, character_id)
+            return jsonify(self.get_character_json(user, character_id))
+
+    def get_character_json(self, user, character_id):
+        db.session.commit()
+        character = self.character_class.query.filter_by(id=character_id).first()
+
+        if character.user_id == user.id:
+            return character.get_protected_json(self.system)
+        else:
+            return character.get_public_json(self.system)

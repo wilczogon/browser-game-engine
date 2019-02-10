@@ -1,4 +1,5 @@
-from browser_game_engine import SystemModule, BadRequest, InternalServerError
+from browser_game_engine import SystemModule, BadRequest, InternalServerError, app, error_handling
+from flask import jsonify
 import random
 
 
@@ -8,7 +9,13 @@ class ExplorationModule(SystemModule):
         self.mappings = mappings
 
     def add_endpoints(self):
-        pass
+        @app.route(self.system.root_path + "/characters/<int:character_id>/explore/<area_public_id>", methods=['POST'])
+        @error_handling
+        @self.system.users.auth
+        def explore(user, character_id, area_public_id): # TODO method for checking character in uri
+            character = self.system.characters.character_class.query.filter_by(id=character_id).first()
+            self.explore(character, area_public_id)
+            return jsonify(self.system.characters.get_character_json(user, character_id))
 
     def explore(self, character, public_area_id):
         mappings = [m for m in self.mappings if m.location_id == character.location]
@@ -27,11 +34,11 @@ class ExplorationModule(SystemModule):
         area = areas[0]
         area.cost.pay(self.system, character)
 
-        for occurrance in area.item_occurrances:
+        for occurrence in area.item_occurrences:
             amount = 0
-            for i in range(occurrance.max_amount_per_search):
-                if random.random() <= occurrance.appearance_rate:
+            for i in range(occurrence.max_amount_per_search):
+                if random.random() <= occurrence.appearance_rate:
                     amount += 1
 
             if amount > 0:
-                self.system.items.add_item(character, occurrance.item_id, amount)
+                self.system.items.add_item(character, occurrence.item_id, amount)

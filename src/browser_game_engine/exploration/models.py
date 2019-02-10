@@ -6,11 +6,11 @@ class ItemOccurrence:
 
 
 class ExplorationAreaDefinition:
-    def __init__(self, id, public_id, name, item_occurances, cost):
+    def __init__(self, id, public_id, name, item_occurrences, cost):
         self.id = id
         self.public_id = public_id
         self.name = name
-        self.item_occurances = item_occurances
+        self.item_occurrences = item_occurrences
         self.cost = cost
 
 

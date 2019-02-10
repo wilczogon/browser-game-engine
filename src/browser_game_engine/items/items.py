@@ -9,7 +9,7 @@ class Items(SystemModule):
 
     def get_items_json(self, character):
         items_recs = CharacterToItem.query.filter_by(character_id=character.id).all()
-        return [{'amount': item_rec.amount, **self.items_definitions_lookup[item_rec.id].to_json()} for item_rec in items_recs]
+        return [{'amount': item_rec.item_amount, **self.items_definitions_lookup[item_rec.item_id].to_json()} for item_rec in items_recs]
 
     def add_item(self, character, item_id, amount):
         if amount <= 0:
