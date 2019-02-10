@@ -11,7 +11,7 @@ class ExplorationModule(SystemModule):
     def add_endpoints(self):
         @app.route(self.system.root_path + "/characters/<int:character_id>/explore/<area_public_id>", methods=['POST'])
         @error_handling
-        @self.system.users.auth
+        @self.system.users.auth  # TODO it should return what was found
         def explore(user, character_id, area_public_id): # TODO method for checking character in uri
             character = self.system.characters.character_class.query.filter_by(id=character_id).first()
             self.explore(character, area_public_id)
@@ -20,7 +20,7 @@ class ExplorationModule(SystemModule):
     def get_areas_for_location(self, character):
         mappings = [m for m in self.mappings if m.location_id == character.location]
         if len(mappings) == 0:
-            raise BadRequest('No areas to explore in this location.')
+            return []
         elif len(mappings) > 1:
             raise InternalServerError('Multiple mappings for single location.')
 

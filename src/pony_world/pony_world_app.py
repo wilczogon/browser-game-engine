@@ -122,8 +122,7 @@ system = System(
             ItemOccurrence('mushroom', 0.2, max_amount_per_search=2)
         ], Cost(action_points=2))],
         mappings=[
-            LocationsToExplorationAreasMapping('ponyland_woods', ['normal_forest_area']),
-            LocationsToExplorationAreasMapping('ponyland_kindergarden', [])
+            LocationsToExplorationAreasMapping('ponyland_woods', ['normal_forest_area'])
         ]
     ),
     items=Items([
