@@ -17,7 +17,7 @@ class ExplorationModule(SystemModule):
             self.explore(character, area_public_id)
             return jsonify(self.system.characters.get_character_json(user, character_id))
 
-    def explore(self, character, public_area_id):
+    def get_areas_for_location(self, character):
         mappings = [m for m in self.mappings if m.location_id == character.location]
         if len(mappings) == 0:
             raise BadRequest('No areas to explore in this location.')
@@ -25,7 +25,15 @@ class ExplorationModule(SystemModule):
             raise InternalServerError('Multiple mappings for single location.')
 
         areas_ids = mappings[0].exploration_area_ids
-        areas = [a for a in self.area_definitions if a.id in areas_ids and a.public_id == public_area_id]
+        return [a for a in self.area_definitions if a.id in areas_ids]
+
+    def get_exploration_areas_json(self, character):
+        areas = self.get_areas_for_location(character)
+        return [a.to_json() for a in areas]
+
+    def explore(self, character, public_area_id):
+        areas = self.get_areas_for_location(character)
+        areas = [a for a in areas if a.public_id == public_area_id]
         if len(areas) == 0:
             raise BadRequest('No area definition for this public_id in this location.')
         elif len(areas) > 1:

@@ -18,9 +18,9 @@ class Character(db.Model):
     state = Column(String(16), default=CharacterStates.ALIVE)
     location = Column(String(32), nullable=False)
 
-    def _get_json(self, system, fields):  # TODO items?
+    def _get_json(self, system, fields):
         cloned = {key: self.__dict__[key] for key in self.__dict__ if not key.startswith('_') and key != 'location'}
-        cloned['location'] = system.travelling.location_lookup[self.location].to_json()
+        cloned['location'] = system.travelling.location_lookup[self.location].to_json(system, self)
         els = list(cloned.items())
         els.append(('connected_paths', system.travelling.get_connected_paths_json(self)))
         els.append(('items', system.items.get_items_json(self)))

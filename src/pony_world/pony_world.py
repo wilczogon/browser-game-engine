@@ -46,9 +46,9 @@ def get_character_info():
     return result.json()
 
 
-def explore():
+def explore(area_id):
     result = requests.post(
-        '{}{}/characters/{}/explore/forest'.format(url, root_path, character_id),
+        '{}{}/characters/{}/explore/{}'.format(url, root_path, character_id, area_id),
         headers=headers
     )
     handle_result(result)
@@ -84,7 +84,15 @@ def game_loop():
             elif choice == 2:
                 pass
             elif choice == 3:
-                explore()
+                character_info = get_character_info()
+                print('Area:')
+                c = 1
+                for area in character_info['location']['exploration_areas']:
+                    print('{}) {}'.format(c, area['name']))
+                    c += 1
+                choice = int(input('>> '))
+                area = character_info['location']['exploration_areas'][choice - 1]
+                explore(area['id'])
             elif choice == 4:
                 character_info = get_character_info()
                 print('Destination:')

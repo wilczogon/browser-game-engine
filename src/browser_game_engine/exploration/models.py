@@ -13,6 +13,13 @@ class ExplorationAreaDefinition:
         self.item_occurrences = item_occurrences
         self.cost = cost
 
+    def to_json(self):
+        return {
+            'id': self.public_id,
+            'name': self.name,
+            'cost': self.cost.to_json()
+        }
+
 
 class LocationsToExplorationAreasMapping:
     def __init__(self, location_id, exploration_area_ids):

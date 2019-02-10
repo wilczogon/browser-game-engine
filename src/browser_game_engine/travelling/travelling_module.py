@@ -40,7 +40,11 @@ class TravellingModule(SystemModule):
                 raise Exception('Failure during getting connected location for path: {}.'.format(path))
 
             location = self.location_lookup[location_id]
-            return {'location_id': location.id, 'location_name': location.name, 'cost': path.cost.to_json()}
+            return {
+                'location_id': location.id,
+                'location_name': location.name,
+                'cost': path.cost.to_json()
+            }
 
         return [get_connected_path_json(path) for path in paths]
 
