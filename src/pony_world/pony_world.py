@@ -46,6 +46,14 @@ def get_character_info():
     return result.json()
 
 
+def explore():
+    result = requests.post(
+        '{}{}/characters/{}/explore/forest'.format(url, root_path, character_id),
+        headers=headers
+    )
+    handle_result(result)
+
+
 def travel(destination):
     result = requests.patch(
         '{}{}/characters/{}'.format(url, root_path, character_id),
@@ -60,8 +68,9 @@ def game_loop():
         print('')
         print('1) Character info')
         print('2) Location info')
-        print('3) Travel')
-        print('4) Logout')
+        print('3) Explore')
+        print('4) Travel')
+        print('5) Logout')
         choice = int(input('>> '))
 
         try:
@@ -75,6 +84,8 @@ def game_loop():
             elif choice == 2:
                 pass
             elif choice == 3:
+                explore()
+            elif choice == 4:
                 character_info = get_character_info()
                 print('Destination:')
                 c = 1
@@ -85,7 +96,7 @@ def game_loop():
                 conn = character_info['connected_paths'][choice-1]
                 destination = conn['location_id']
                 travel(destination)
-            elif choice == 4:
+            elif choice == 5:
                 logout()
                 sys.exit()
         except Exception as e:
