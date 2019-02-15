@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime
-from browser_game_engine.system_db import db
+from browser_game_engine import db, generate_uuid
 import datetime
 from .character_states import CharacterStates
 
@@ -11,8 +11,8 @@ class Character(db.Model):
     _PROTECTED_FIELDS = ['id', 'name', 'created_at', 'state', 'location', 'connected_paths', 'items']
     _PRIVATE_FIELDS = ['id', 'user_id', 'name', 'created_at', 'state', 'location', 'connected_paths', 'items']
 
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, nullable=False)
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    user_id = Column(String(36), nullable=False)
     name = Column(String(64), nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     state = Column(String(16), default=CharacterStates.ALIVE)

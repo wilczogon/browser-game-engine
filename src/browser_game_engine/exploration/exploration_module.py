@@ -10,7 +10,7 @@ class ExplorationModule(SystemModule):
         self.mappings = mappings
 
     def add_endpoints(self):
-        @app.route(self.system.root_path + "/characters/<int:character_id>/explore/<area_public_id>", methods=['POST'])
+        @app.route(self.system.root_path + "/characters/<character_id>/explore/<area_public_id>", methods=['POST'])
         @error_handling
         @self.system.users.auth
         @self.system.characters.get_and_validate_character

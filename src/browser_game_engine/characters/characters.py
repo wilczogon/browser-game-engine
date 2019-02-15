@@ -18,7 +18,7 @@ class Characters(SystemModule):
             db.session.commit()
             return jsonify({'characters': [character.get_public_json(self.system) for character in self.character_class.query.all()]})
 
-        @app.route(self.system.root_path + "/characters/<int:character_id>")
+        @app.route(self.system.root_path + "/characters/<character_id>")
         @error_handling
         @self.system.users.auth
         def get_character(user, character_id):
@@ -46,7 +46,7 @@ class Characters(SystemModule):
 
             return jsonify(self.get_character_json(user, character.id))
 
-        @app.route(self.system.root_path + "/characters/<int:character_id>", methods=['PATCH'])
+        @app.route(self.system.root_path + "/characters/<character_id>", methods=['PATCH'])
         @error_handling
         @self.system.users.auth
         @self.get_and_validate_character

@@ -5,7 +5,7 @@ from browser_game_engine.system_db import db
 class CharacterToItem(db.Model):
     __tablename__ = 'characters_to_items'
 
-    character_id = Column(Integer, primary_key=True)
+    character_id = Column(String(36), primary_key=True)
     item_id = Column(String(32), primary_key=True)
     item_amount = Column(Integer)
 
