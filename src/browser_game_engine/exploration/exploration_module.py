@@ -13,8 +13,8 @@ class ExplorationModule(SystemModule):
         @app.route(self.system.root_path + "/characters/<int:character_id>/explore/<area_public_id>", methods=['POST'])
         @error_handling
         @self.system.users.auth
-        def explore(user, character_id, area_public_id): # TODO method for checking character in uri
-            character = self.system.characters.character_class.query.filter_by(id=character_id).first()
+        @self.system.characters.get_and_validate_character
+        def explore(user, character, area_public_id):
             found_items = self.explore(character, area_public_id)
             return jsonify({'found_items': [item.to_json() for item in found_items]})
 

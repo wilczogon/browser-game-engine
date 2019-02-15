@@ -2,6 +2,7 @@ from browser_game_engine import SystemModule, app, db, error_handling, BadReques
 from .character_states import CharacterStates
 from flask import jsonify, request
 import json
+from functools import wraps
 
 
 class Characters(SystemModule):
@@ -48,18 +49,14 @@ class Characters(SystemModule):
         @app.route(self.system.root_path + "/characters/<int:character_id>", methods=['PATCH'])
         @error_handling
         @self.system.users.auth
-        def update_character(user, character_id):
-            if user.last_character_id != character_id:
-                raise Unauthorized('Cannot modify character.')
-
-            character = self.character_class.query.filter_by(id=character_id).first()
-
+        @self.get_and_validate_character
+        def update_character(user, character):
             data = json.loads(request.get_data())
 
             if 'location' in data:
                 self.system.travelling.travel(character, data['location'])
 
-            return jsonify(self.get_character_json(user, character_id))
+            return jsonify(self.get_character_json(user, character.id))
 
     def get_character_json(self, user, character_id):
         db.session.commit()
@@ -69,3 +66,14 @@ class Characters(SystemModule):
             return character.get_protected_json(self.system)
         else:
             return character.get_public_json(self.system)
+
+    def get_and_validate_character(self, func):
+        @wraps(func)
+        def call(user, character_id, *args, **kwargs):
+            if user.last_character_id != character_id:
+                raise Unauthorized('Cannot modify character.')
+
+            character = self.character_class.query.filter_by(id=character_id).first()
+
+            return func(user, character, *args, **kwargs)
+        return call
