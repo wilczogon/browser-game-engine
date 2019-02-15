@@ -52,6 +52,7 @@ def explore(area_id):
         headers=headers
     )
     handle_result(result)
+    return result.json()
 
 
 def travel(destination):
@@ -92,7 +93,11 @@ def game_loop():
                     c += 1
                 choice = int(input('>> '))
                 area = character_info['location']['exploration_areas'][choice - 1]
-                explore(area['id'])
+                result = explore(area['id'])
+                if len(result['found_items']) == 0:
+                    print('Nothing found.')
+                else:
+                    print('Found: {}.'.format(', '.join(['{}x {}'.format(i['amount'], i['name']) for i in result['found_items']])))
             elif choice == 4:
                 character_info = get_character_info()
                 print('Destination:')
