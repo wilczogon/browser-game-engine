@@ -39,4 +39,4 @@ class System:
         app.app_context().push()
 
     def run(self):
-        app.run()
+        app.run()  # TODO prod run: host='0.0.0.0'

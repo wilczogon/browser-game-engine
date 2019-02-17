@@ -4,7 +4,7 @@ from browser_game_engine.users import Users, User
 from browser_game_engine.characters import Characters, Character
 from browser_game_engine.travelling import TravellingModule, LocationDefinition, PathDefinition
 from browser_game_engine.exploration import ExplorationModule, ItemOccurrence, ExplorationAreaDefinition, LocationsToExplorationAreasMapping
-from browser_game_engine.items import Items, ItemDefinition, Rarity
+from browser_game_engine.items import ItemsModule, ConsumableItemDefinition, Rarity
 from browser_game_engine.crafting import CraftingSystem, RecipeDescription
 from browser_game_engine.supporting_models import Cost
 from sqlalchemy import Column, Integer, String, Float, Boolean
@@ -33,10 +33,17 @@ def login(email_address, password):
     user = PAUser.query.filter_by(email_address=email_address).first()
     user.logged = True
     db.session.commit()
+    character = Pony.query.filter_by(id=user.last_character_id).first()
+    if character is not None:
+        if character.energy < 0.1:
+            character.location = 'ponyland_kindergarden'
+            character.energy = 1
+            # TODO set right event
+            db.session.commit()
     return user
 
 
-def logout(user):
+def logout(user): # TODO automatic log out
     user.logged = False
     db.session.commit()
 
@@ -53,19 +60,31 @@ def authenticate(username, password):
 
 
 class Pony(Character):
-    _PROTECTED_FIELDS = Character._PROTECTED_FIELDS + ['species', 'strength', 'action_points']
-    _PRIVATE_FIELDS = Character._PRIVATE_FIELDS + ['species', 'strength', 'action_points']
+    _PROTECTED_FIELDS = Character._PROTECTED_FIELDS + ['species', 'strength', 'action_points', 'max_action_points', 'energy', 'max_energy']
+    _PRIVATE_FIELDS = Character._PRIVATE_FIELDS + ['species', 'strength', 'action_points', 'max_action_points', 'energy', 'max_energy']
 
     species = Column(String(16))
     strength = Column(Integer, default=1)
     action_points = Column(Float, default=20)
+    max_action_points = 20
+    energy = Column(Float, default=20)
+    max_energy = 20
 
 
 def action_points_renewal():
-    characters = Pony.query.filter(Pony.action_points < 20).all()
+    characters = Pony.query.filter(Pony.action_points < Pony.max_action_points).all()
 
     for character in characters:
-        character.action_points = Pony.action_points + 0.1
+        character.action_points = Pony.action_points + 0.1 # TODO min of this and max_action_points
+
+    db.session.commit()
+
+
+def action_losing_energy():
+    characters = Pony.query.filter(Pony.energy > 0).all()
+
+    for character in characters:
+        character.energy = Pony.energy - 0.1 # TODO min of this and max_action_points
 
     db.session.commit()
 
@@ -90,10 +109,12 @@ system = System(
     '/v1/pony_world',
     scheduler=Scheduler(
         task_definitions=[
-            TaskDefinition('action_points_renewal', action_points_renewal)
+            TaskDefinition('action_points_renewal', action_points_renewal),
+            TaskDefinition('action_losing_energy', action_losing_energy)
         ],
         schedules=[
-            Schedule('action_points_renewal', 0, interval=60)
+            Schedule('action_points_renewal', 0, interval=60),
+            Schedule('action_losing_energy', 0, interval=600)
         ]
     ),
     users=Users(
@@ -125,11 +146,11 @@ system = System(
             LocationsToExplorationAreasMapping('ponyland_woods', ['normal_forest_area'])
         ]
     ),
-    items=Items([
-        ItemDefinition('apple', 'Apple', 'food', Rarity.COMMON, 2),
-        ItemDefinition('apple_juice', 'Apple Juice', 'food', Rarity.UNCOMMON, 6),
-        ItemDefinition('strawberry', 'Strawberry', 'food', Rarity.COMMON, 1),
-        ItemDefinition('mushroom', 'Mushroom', 'food', Rarity.COMMON, 2)
+    items=ItemsModule([
+        ConsumableItemDefinition('apple', 'Apple', Rarity.COMMON, 2, energy=2),
+        ConsumableItemDefinition('apple_juice', 'Apple Juice', Rarity.UNCOMMON, 6, energy=5),
+        ConsumableItemDefinition('strawberry', 'Strawberry', Rarity.COMMON, 1, energy=1),
+        ConsumableItemDefinition('mushroom', 'Mushroom', Rarity.COMMON, 2, energy=1)
     ]),
     crafting_system=CraftingSystem([
         RecipeDescription(['apple', 'apple'], ['apple_juice'], 2, 0.99)

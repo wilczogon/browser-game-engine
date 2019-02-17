@@ -1,5 +1,4 @@
-from .item_definition import ItemDefinition
-from .items import Items
+from .items_module import ItemsModule
 from .rarity import Rarity
 from .character_to_item import *
-from .item_with_amount import *
+from .models import *

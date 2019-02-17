@@ -46,6 +46,12 @@ def get_character_info():
     return result.json()
 
 
+def eat(item_id, amount):
+    result = requests.post('{}{}/characters/{}/eat'.format(url, root_path, character_id), json={'item_id': item_id, 'amount': amount}, headers=headers)
+    handle_result(result)
+    return result.json()
+
+
 def explore(area_id):
     result = requests.post(
         '{}{}/characters/{}/explore/{}'.format(url, root_path, character_id, area_id),
@@ -69,9 +75,10 @@ def game_loop():
         print('')
         print('1) Character info')
         print('2) Location info')
-        print('3) Explore')
-        print('4) Travel')
-        print('5) Logout')
+        print('3) Eat')
+        print('4) Explore')
+        print('5) Travel')
+        print('6) Logout')
         choice = int(input('>> '))
 
         try:
@@ -85,6 +92,10 @@ def game_loop():
             elif choice == 2:
                 pass
             elif choice == 3:
+                item_id = input('Item id >> ')
+                amount = int(input('Amount >> '))
+                eat(item_id, amount)
+            elif choice == 4:
                 character_info = get_character_info()
                 print('Area:')
                 c = 1
@@ -98,7 +109,7 @@ def game_loop():
                     print('Nothing found.')
                 else:
                     print('Found: {}.'.format(', '.join(['{}x {}'.format(i['amount'], i['name']) for i in result['found_items']])))
-            elif choice == 4:
+            elif choice == 5:
                 character_info = get_character_info()
                 print('Destination:')
                 c = 1
@@ -109,7 +120,7 @@ def game_loop():
                 conn = character_info['connected_paths'][choice-1]
                 destination = conn['location_id']
                 travel(destination)
-            elif choice == 5:
+            elif choice == 6:
                 logout()
                 sys.exit()
         except Exception as e:
