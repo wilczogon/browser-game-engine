@@ -1,15 +1,15 @@
-from browser_game_engine.system_module import SystemModule
+from browser_game_engine.engine_module import EngineModule
 from threading import Timer
 import sched
 
 
-class Scheduler(SystemModule):
+class Scheduler(EngineModule):
     def __init__(self, task_definitions, schedules):
         self.task_definitions = task_definitions
         self.schedules = schedules
 
-    def set_system(self, system):
-        SystemModule.set_system(self, system)
+    def set_engine(self, engine):
+        EngineModule.set_engine(self, engine)
 
         for schedule in self.schedules:
             self.schedule(
@@ -26,7 +26,7 @@ class Scheduler(SystemModule):
         else:
             def periodical():
                 def task_wrapper(*args):
-                    self.system.push_context()
+                    self.engine.push_context()
                     try:
                         task(*args)
                     except Exception as e:

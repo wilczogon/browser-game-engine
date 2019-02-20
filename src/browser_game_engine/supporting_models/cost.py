@@ -6,21 +6,21 @@ class Cost:
         self.item_cost = item_cost
         self.other_costs = other_costs
 
-    def check(self, system, character):
+    def check(self, engine, character):
         if self.item_cost is not None:
             for item_id in self.item_cost:
-                system.items.check_amount(character, item_id, 1)
+                engine.items.check_amount(character, item_id, 1)
 
         for parameter_name in self.other_costs:
             if character.__dict__[parameter_name] < self.other_costs[parameter_name]:
                 raise BadRequest('Cannot pay cost')
 
-    def pay(self, system, character):
-        self.check(system, character)
+    def pay(self, engine, character):
+        self.check(engine, character)
 
         if self.item_cost is not None:
             for item_id in self.item_cost:
-                system.items.remove_item(character, item_id, 1)
+                engine.items.remove_item(character, item_id, 1)
 
         for parameter_name in self.other_costs:
             character.__setattr__(parameter_name, character.__class__.__dict__[parameter_name] - self.other_costs[parameter_name])

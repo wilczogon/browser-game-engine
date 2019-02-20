@@ -1,8 +1,8 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from browser_game_engine import db, generate_uuid
 import datetime
-from .user_states import UserStates
-from .user_roles import UserRoles
+from .models import UserStates
+from .models import UserRoles
 
 
 class User(db.Model):

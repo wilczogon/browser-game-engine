@@ -1,3 +1,2 @@
 from .travelling_module import TravellingModule
-from .location_definition import LocationDefinition
-from .path_definition import PathDefinition
+from .models import *

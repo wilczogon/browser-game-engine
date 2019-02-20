@@ -1,8 +1,8 @@
-from browser_game_engine import SystemModule, BadRequest
-from browser_game_engine.system_db import db
+from browser_game_engine import EngineModule, BadRequest
+from browser_game_engine.engine_imports import db
 
 
-class TravellingModule(SystemModule):
+class TravellingModule(EngineModule):
     def __init__(self, locations_definitions, paths_definitions):
         self.locations_definitions = locations_definitions
         self.location_lookup = {location.id: location for location in locations_definitions}
@@ -69,6 +69,6 @@ class TravellingModule(SystemModule):
     def travel(self, character, destination_id):
         path_definition = self.get_path_definition(character, destination_id)
 
-        path_definition.cost.pay(self.system, character)
+        path_definition.cost.pay(self.engine, character)
         character.location = destination_id
         db.session.commit()

@@ -5,3 +5,15 @@ class PathDefinition:
         self.cost = cost
         self.two_way_relation = two_way_relation
         self.visibility_condition = visibility_condition
+
+
+class LocationDefinition:
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
+
+    def to_json(self, engine, character):
+        obj = dict(self.__dict__.items())
+        obj['exploration_areas'] = engine.exploration.get_exploration_areas_json(character)
+
+        return obj

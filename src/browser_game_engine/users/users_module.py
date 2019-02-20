@@ -1,12 +1,12 @@
-from browser_game_engine import SystemModule, app, Unauthorized, error_handling, ApiError, BadRequest
-from .user_states import UserStates
-from .user_roles import UserRoles
+from browser_game_engine import EngineModule, app, Unauthorized, error_handling, ApiError, BadRequest
+from .models import UserStates
+from .models import UserRoles
 import json
 from flask import request, jsonify
 from functools import wraps
 
 
-class Users(SystemModule):
+class UsersModule(EngineModule):
     def __init__(self, user_class, register, login, logout, authenticate):
         self.user_class = user_class
         self.register = register
@@ -29,13 +29,13 @@ class Users(SystemModule):
                 raise Unauthorized('You are not authorized to get other users info.')
             return jsonify(user.to_json())
 
-        @app.route(self.system.root_path + "/users/<int:user_id>")
+        @app.route(self.engine.root_path + "/users/<int:user_id>")
         @error_handling
         @self.auth
         def get_user(user, user_id):
             return _get_user(user, user_id)
 
-        @app.route(self.system.root_path + "/users", methods=['POST'])
+        @app.route(self.engine.root_path + "/users", methods=['POST'])
         @error_handling
         def register():
             data = json.loads(request.get_data())
@@ -43,7 +43,7 @@ class Users(SystemModule):
 
             return 'Successfully registered user.'
 
-        @app.route(self.system.root_path + "/users/login", methods=['POST']) # auth..?
+        @app.route(self.engine.root_path + "/users/login", methods=['POST']) # auth..?
         @error_handling
         def login():
             try:
@@ -57,7 +57,7 @@ class Users(SystemModule):
             user = self.login(req_auth.username, req_auth.password)
             return _get_user(user, user.id)
 
-        @app.route(self.system.root_path + "/users/logout", methods=['POST'])
+        @app.route(self.engine.root_path + "/users/logout", methods=['POST'])
         @error_handling
         @self.auth
         def logout(user):

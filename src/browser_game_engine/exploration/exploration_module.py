@@ -1,19 +1,19 @@
-from browser_game_engine import SystemModule, BadRequest, InternalServerError, app, error_handling
+from browser_game_engine import EngineModule, BadRequest, InternalServerError, app, error_handling
 from flask import jsonify
 from browser_game_engine.items import ItemWithAmount
 import random
 
 
-class ExplorationModule(SystemModule):
+class ExplorationModule(EngineModule):
     def __init__(self, area_definitions, mappings):
         self.area_definitions = area_definitions
         self.mappings = mappings
 
     def add_endpoints(self):
-        @app.route(self.system.root_path + "/characters/<character_id>/explore/<area_public_id>", methods=['POST'])
+        @app.route(self.engine.root_path + "/characters/<character_id>/explore/<area_public_id>", methods=['POST'])
         @error_handling
-        @self.system.users.auth
-        @self.system.characters.get_and_validate_character
+        @self.engine.users.auth
+        @self.engine.characters.get_and_validate_character
         def explore(user, character, area_public_id):
             found_items = self.explore(character, area_public_id)
             return jsonify({'found_items': [item.to_json() for item in found_items]})
@@ -41,7 +41,7 @@ class ExplorationModule(SystemModule):
             raise BadRequest('Multiple area definitions with the same public_id in this location.')
 
         area = areas[0]
-        area.cost.pay(self.system, character)
+        area.cost.pay(self.engine, character)
 
         result = []
 
@@ -52,7 +52,7 @@ class ExplorationModule(SystemModule):
                     amount += 1
 
             if amount > 0:
-                result.append(ItemWithAmount(self.system.items.items_definitions_lookup[occurrence.item_id], amount))
-                self.system.items.add_item(character, occurrence.item_id, amount)
+                result.append(ItemWithAmount(self.engine.items.items_definitions_lookup[occurrence.item_id], amount))
+                self.engine.items.add_item(character, occurrence.item_id, amount)
 
         return result

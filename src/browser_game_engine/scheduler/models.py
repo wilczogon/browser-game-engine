@@ -4,3 +4,9 @@ class Schedule:
         self.start_in = start_in
         self.args = args
         self.interval = interval
+
+
+class TaskDefinition:
+    def __init__(self, id, func):
+        self.id = id
+        self.func = func

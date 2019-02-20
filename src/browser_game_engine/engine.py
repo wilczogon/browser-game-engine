@@ -5,8 +5,8 @@ db = SQLAlchemy()
 app = Flask(__name__)
 
 
-class System:
-    def __init__(self, db_uri, root_path, scheduler, users, characters, travelling, exploration, items, crafting_system):
+class Engine:
+    def __init__(self, db_uri, root_path, scheduler, users, characters, travelling, exploration, items, crafting):
         app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
         db.init_app(app)
         self.push_context()
@@ -15,25 +15,25 @@ class System:
         self.root_path = root_path
 
         self.scheduler = scheduler
-        self.scheduler.set_system(self)
+        self.scheduler.set_engine(self)
 
         self.users = users
-        self.users.set_system(self)
+        self.users.set_engine(self)
 
         self.characters = characters
-        self.characters.set_system(self)
+        self.characters.set_engine(self)
 
         self.travelling = travelling
-        self.travelling.set_system(self)
+        self.travelling.set_engine(self)
 
         self.exploration = exploration
-        self.exploration.set_system(self)
+        self.exploration.set_engine(self)
 
         self.items = items
-        self.items.set_system(self)
+        self.items.set_engine(self)
         
-        self.crafting_system = crafting_system
-        self.crafting_system.set_system(self)
+        self.crafting = crafting
+        self.crafting.set_engine(self)
 
     def push_context(self):
         app.app_context().push()

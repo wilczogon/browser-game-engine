@@ -1,7 +1,7 @@
-from browser_game_engine.system_module import SystemModule
+from browser_game_engine.engine_module import EngineModule
 
 
-class CraftingSystem(SystemModule):
+class CraftingModule(EngineModule):
     def __init__(self, recipe_descriptions):
         self.recipe_descriptions = recipe_descriptions
 

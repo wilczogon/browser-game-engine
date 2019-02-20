@@ -1,11 +1,11 @@
-from browser_game_engine import System, db, Unauthorized, BadRequest
+from browser_game_engine import Engine, db, Unauthorized, BadRequest
 from browser_game_engine.scheduler import Scheduler, Schedule, TaskDefinition
-from browser_game_engine.users import Users, User
-from browser_game_engine.characters import Characters, Character
+from browser_game_engine.users import UsersModule, User
+from browser_game_engine.characters import CharactersModule, Character
 from browser_game_engine.travelling import TravellingModule, LocationDefinition, PathDefinition
 from browser_game_engine.exploration import ExplorationModule, ItemOccurrence, ExplorationAreaDefinition, LocationsToExplorationAreasMapping
 from browser_game_engine.items import ItemsModule, ConsumableItemDefinition, Rarity
-from browser_game_engine.crafting import CraftingSystem, RecipeDescription
+from browser_game_engine.crafting import CraftingModule, RecipeDescription
 from browser_game_engine.supporting_models import Cost
 from sqlalchemy import Column, Integer, String, Float, Boolean
 
@@ -104,7 +104,7 @@ def create_character_func(user, **kwargs):
     )
 
 
-system = System(
+engine = Engine(
     'mysql://root:gurotyfi@127.0.0.1/pony_world',
     '/v1/pony_world',
     scheduler=Scheduler(
@@ -117,14 +117,14 @@ system = System(
             Schedule('action_losing_energy', 0, interval=600)
         ]
     ),
-    users=Users(
+    users=UsersModule(
         user_class=PAUser,
         register=register,
         login=login,
         logout=logout,
         authenticate=authenticate
     ),
-    characters=Characters(
+    characters=CharactersModule(
         character_class=Pony,
         create_character_func=create_character_func
     ),
@@ -152,11 +152,11 @@ system = System(
         ConsumableItemDefinition('strawberry', 'Strawberry', Rarity.COMMON, 1, energy=1),
         ConsumableItemDefinition('mushroom', 'Mushroom', Rarity.COMMON, 2, energy=1)
     ]),
-    crafting_system=CraftingSystem([
+    crafting=CraftingModule([
         RecipeDescription(['apple', 'apple'], ['apple_juice'], 2, 0.99)
     ])
 )
 
 db.create_all()
 
-system.run()
+engine.run()

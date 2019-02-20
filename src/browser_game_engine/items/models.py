@@ -4,6 +4,14 @@ class ItemCategory:
     COLLECTABLE = 'collectable'
 
 
+class Rarity:
+    COMMON = 0
+    UNCOMMON = 1
+    RARE = 2
+    VERY_RARE = 3
+    MYSTIC_RARE = 4
+
+
 class ItemDefinition:
     def __init__(self, id, name, category, rarity, shop_price):
         self.id = id

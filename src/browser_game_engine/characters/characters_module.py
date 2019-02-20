@@ -1,32 +1,32 @@
-from browser_game_engine import SystemModule, app, db, error_handling, BadRequest, Unauthorized
-from .character_states import CharacterStates
+from browser_game_engine import EngineModule, app, db, error_handling, BadRequest, Unauthorized
+from .models import CharacterStates
 from flask import jsonify, request
 import json
 from functools import wraps
 
 
-class Characters(SystemModule):
+class CharactersModule(EngineModule):
     def __init__(self, character_class, create_character_func):
         self.character_class = character_class
         self.create_character_func = create_character_func
 
     def add_endpoints(self):
-        @app.route(self.system.root_path + "/characters")
+        @app.route(self.engine.root_path + "/characters")
         @error_handling
-        @self.system.users.auth
+        @self.engine.users.auth
         def get_characters(user):
             db.session.commit()
-            return jsonify({'characters': [character.get_public_json(self.system) for character in self.character_class.query.all()]})
+            return jsonify({'characters': [character.get_public_json(self.engine) for character in self.character_class.query.all()]})
 
-        @app.route(self.system.root_path + "/characters/<character_id>")
+        @app.route(self.engine.root_path + "/characters/<character_id>")
         @error_handling
-        @self.system.users.auth
+        @self.engine.users.auth
         def get_character(user, character_id):
             return jsonify(self.get_character_json(user, character_id))
 
-        @app.route(self.system.root_path + "/characters", methods=['POST'])
+        @app.route(self.engine.root_path + "/characters", methods=['POST'])
         @error_handling
-        @self.system.users.auth
+        @self.engine.users.auth
         def create_character(user):
             data = json.loads(request.get_data())
 
@@ -46,15 +46,15 @@ class Characters(SystemModule):
 
             return jsonify(self.get_character_json(user, character.id))
 
-        @app.route(self.system.root_path + "/characters/<character_id>", methods=['PATCH'])
+        @app.route(self.engine.root_path + "/characters/<character_id>", methods=['PATCH'])
         @error_handling
-        @self.system.users.auth
+        @self.engine.users.auth
         @self.get_and_validate_character
         def update_character(user, character):
             data = json.loads(request.get_data())
 
             if 'location' in data:
-                self.system.travelling.travel(character, data['location'])
+                self.engine.travelling.travel(character, data['location'])
 
             return jsonify(self.get_character_json(user, character.id))
 
@@ -63,9 +63,9 @@ class Characters(SystemModule):
         character = self.character_class.query.filter_by(id=character_id).first()
 
         if character.user_id == user.id:
-            return character.get_protected_json(self.system)
+            return character.get_protected_json(self.engine)
         else:
-            return character.get_public_json(self.system)
+            return character.get_public_json(self.engine)
 
     def get_and_validate_character(self, func):
         @wraps(func)

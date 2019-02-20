@@ -1,2 +1,2 @@
-from .crafting_system import *
-from .recipe_description import *
+from .crafting_module import *
+from .models import *
