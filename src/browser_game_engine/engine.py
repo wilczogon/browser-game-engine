@@ -1,13 +1,16 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO
 
 db = SQLAlchemy()
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 
 class Engine:
-    def __init__(self, db_uri, root_path, scheduler, users, characters, travelling, exploration, items, crafting):
+    def __init__(self, db_uri, websocket_secret, root_path, scheduler, users, characters, travelling, exploration, items, crafting):
         app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+        app.config['SECRET_KEY'] = 'websocket_secret'
         db.init_app(app)
         self.push_context()
 
@@ -39,4 +42,4 @@ class Engine:
         app.app_context().push()
 
     def run(self):
-        app.run()  # TODO prod run: host='0.0.0.0'
+        socketio.run(app)  # TODO prod run: host='0.0.0.0'

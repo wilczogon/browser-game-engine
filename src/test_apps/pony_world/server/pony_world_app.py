@@ -31,6 +31,9 @@ def register(email_address):
 
 def login(email_address, password):
     user = PAUser.query.filter_by(email_address=email_address).first()
+    if user is None:
+        raise Unauthorized()
+
     user.logged = True
     db.session.commit()
     character = Pony.query.filter_by(id=user.last_character_id).first()
@@ -106,6 +109,7 @@ def create_character_func(user, **kwargs):
 
 engine = Engine(
     'mysql://root:gurotyfi@127.0.0.1/pony_world',
+    'secret_key',
     '/v1/pony_world',
     scheduler=Scheduler(
         task_definitions=[

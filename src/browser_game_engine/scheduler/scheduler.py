@@ -1,6 +1,5 @@
-from browser_game_engine.engine_module import EngineModule
+from browser_game_engine import EngineModule
 from threading import Timer
-import sched
 
 
 class Scheduler(EngineModule):
