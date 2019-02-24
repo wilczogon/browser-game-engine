@@ -1,1 +1,1 @@
-from browser_game_engine.engine import db, app
+from browser_game_engine.engine import db, app, socketio

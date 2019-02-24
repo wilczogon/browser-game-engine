@@ -2,13 +2,15 @@ import curses
 
 
 class Chat:
-    def __init__(self, stdscr, chat_win):
+    def __init__(self, stdscr, chat_win, socket_io_client):
         self.stdscr = stdscr
         chat_win_y, chat_win_x = chat_win.getmaxyx()
         self.chat_win = chat_win.derwin(chat_win_y - 2, chat_win_x, 0, 0)
         self.input_win = chat_win.derwin(3, chat_win_x, chat_win_y - 3, 0)
         self.message = ''
         self.chat_content = []
+        self.socket_io_client = socket_io_client
+        self.socket_io_client.handle_message(self.add_message)
 
     def draw(self):
         self.chat_win.border(0, 0, 0, 0, 0, 0, curses.ACS_LTEE, curses.ACS_RTEE)
@@ -32,7 +34,7 @@ class Chat:
                 curses.curs_set(False)
                 break
             elif key in [curses.KEY_ENTER, 10, 13]:
-                # TODO send message
+                self.socket_io_client.send_message(self.message)
                 self.message = ''
                 self.input_win.addstr(1, 2, "Click '/' to switch between menus and chat")
                 self.input_win.refresh()
@@ -44,9 +46,15 @@ class Chat:
                 self.input_win.border(0, 0, 0, 0, curses.ACS_LTEE, curses.ACS_RTEE, 0, 0)
                 self.input_win.addstr(1, 2, self.message)
                 self.input_win.refresh()
+            elif key == curses.KEY_BACKSPACE:
+                self.message = self.message[:-1]
+                self.input_win.clear()
+                self.input_win.border(0, 0, 0, 0, curses.ACS_LTEE, curses.ACS_RTEE, 0, 0)
+                self.input_win.addstr(1, 2, self.message)
+                self.input_win.refresh()
 
     def add_message(self, msg):
-        self.chat_content.append(msg)
+        self.chat_content.append('{}: {}'.format(msg['sender'], msg['message']))
 
         elements_to_show = self.chat_content
         y, x = self.chat_win.getmaxyx()

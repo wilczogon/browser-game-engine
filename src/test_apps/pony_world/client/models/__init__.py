@@ -6,3 +6,4 @@ from .register_form import *
 from .game_layout import *
 from .game_menu import *
 from .chat import *
+from .socket_io_client import *

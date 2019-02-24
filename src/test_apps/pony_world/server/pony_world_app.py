@@ -1,5 +1,9 @@
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 from browser_game_engine import Engine, db, Unauthorized, BadRequest
 from browser_game_engine.scheduler import Scheduler, Schedule, TaskDefinition
+from browser_game_engine.chat import ChatModule
 from browser_game_engine.users import UsersModule, User
 from browser_game_engine.characters import CharactersModule, Character
 from browser_game_engine.travelling import TravellingModule, LocationDefinition, PathDefinition
@@ -129,6 +133,7 @@ engine = Engine(
             Schedule('action_losing_energy', 0, interval=600)
         ]
     ),
+    chat=ChatModule(),
     users=UsersModule(
         user_class=PAUser,
         register=register,

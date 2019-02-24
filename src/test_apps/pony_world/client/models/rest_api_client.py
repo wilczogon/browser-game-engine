@@ -20,9 +20,8 @@ class RestApiClient:
         self.headers['Authorization'] = 'Basic {}'.format(encoded.decode("utf-8"))
         result = requests.post('{}{}/users/login'.format(self.url, self.root_path), headers=self.headers)
         self.handle_result(result)
-        global character_id
-        character_id = result.json()['last_character_id']
-        return character_id
+        self.character_id = result.json()['last_character_id']
+        return self.character_id
 
     def register(self, email_address):
         result = requests.post('{}{}/users'.format(self.url, self.root_path), json={'email_address': email_address})
@@ -33,25 +32,32 @@ class RestApiClient:
         result = requests.post('{}{}/users/logout'.format(self.url, self.root_path), headers=self.headers)
         self.handle_result(result)
 
+    def connect(self, sid):
+        result = requests.post(
+            '{}{}/characters/{}/connect'.format(self.url, self.root_path, self.character_id),
+            json={'sid': sid},
+            headers=self.headers
+        )
+        self.handle_result(result)
+
     def create_character(self, name, species):
         result = requests.post('{}{}/characters'.format(self.url, self.root_path), json={'name': name, 'species': species}, headers=self.headers)
         self.handle_result(result)
-        global character_id
-        character_id = result.json()['id']
+        self.character_id = result.json()['id']
 
     def get_character_info(self):
-        result = requests.get('{}{}/characters/{}'.format(self.url, self.root_path, character_id), headers=self.headers)
+        result = requests.get('{}{}/characters/{}'.format(self.url, self.root_path, self.character_id), headers=self.headers)
         self.handle_result(result)
         return result.json()
 
     def eat(self, item_id, amount):
-        result = requests.post('{}{}/characters/{}/eat'.format(self.url, self.root_path, character_id), json={'item_id': item_id, 'amount': amount}, headers=self.headers)
+        result = requests.post('{}{}/characters/{}/eat'.format(self.url, self.root_path, self.character_id), json={'item_id': item_id, 'amount': amount}, headers=self.headers)
         self.handle_result(result)
         return result.json()
 
     def explore(self, area_id):
         result = requests.post(
-            '{}{}/characters/{}/explore/{}'.format(self.url, self.root_path, character_id, area_id),
+            '{}{}/characters/{}/explore/{}'.format(self.url, self.root_path, self.character_id, area_id),
             headers=self.headers
         )
         self.handle_result(result)
@@ -59,7 +65,7 @@ class RestApiClient:
 
     def travel(self, destination):
         result = requests.patch(
-            '{}{}/characters/{}'.format(self.url, self.root_path, character_id),
+            '{}{}/characters/{}'.format(self.url, self.root_path, self.character_id),
             json={'location': destination},
             headers=self.headers
         )

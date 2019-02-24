@@ -1,7 +1,8 @@
 from curses import wrapper
 from models import *
 
-client = RestApiClient('http://127.0.0.1:5000')
+api_client = RestApiClient('http://127.0.0.1:5000')
+socket_io_client = SocketIOClient('127.0.0.1', 5000)
 
 
 def show_item_info(info_win, item_info):
@@ -28,7 +29,7 @@ def item_menu_loop(stdscr, menu_win, info_win, chat, item_info):
         answer = menu.get_answer()
 
         if answer == 'eat':
-            character_info = client.eat(item_info['id'], 1)
+            character_info = api_client.eat(item_info['id'], 1)
             item_info = [i for i in character_info['items'] if i['id'] == item_info['id']][0]
             show_item_info(info_win, item_info)
         elif answer == 'back':
@@ -36,7 +37,7 @@ def item_menu_loop(stdscr, menu_win, info_win, chat, item_info):
 
 
 def inventory_menu_loop(stdscr, menu_win, info_win, chat):
-    character_info = client.get_character_info()
+    character_info = api_client.get_character_info()
     while True:
         menu_win.clear()
         menu_win.box()
@@ -67,7 +68,7 @@ def character_menu_loop(stdscr, menu_win, info_win, chat):
         if answer == 'info':
             info_win.clear()
             info_win.box()
-            info = client.get_character_info()
+            info = api_client.get_character_info()
             info_lines = [
                 'Character name: {}'.format(info['name']),
                 '       Species: {}'.format(info['species']),
@@ -94,7 +95,7 @@ def exploration_menu_loop(stdscr, menu_win, info_win, chat, character_info):
         if answer == 'back':
             break
         else:
-            result = client.explore(answer)
+            result = api_client.explore(answer)
             info_win.clear()
             info_win.box()
 
@@ -137,12 +138,12 @@ def travelling_menu_loop(stdscr, menu_win, info_win, chat, character_info):
         if answer == 'back':
             break
         else:
-            result = client.travel(answer)
+            result = api_client.travel(answer)
             show_location_info(info_win, result)
 
 
 def location_menu_loop(stdscr, menu_win, info_win, chat):
-    info = client.get_character_info()
+    info = api_client.get_character_info()
     show_location_info(info_win, info)
 
     while True:
@@ -181,7 +182,7 @@ def main_menu_loop(stdscr, menu_win, info_win, chat):
         elif answer == 'location':
             location_menu_loop(stdscr, menu_win, info_win, chat)
         elif answer == 'exit':
-            client.logout()
+            api_client.logout()
             break
 
 def main(stdscr):
@@ -192,7 +193,7 @@ def main(stdscr):
     if result == 'login':
         form = LoginForm(stdscr)
         email_address = form.get_login_data()
-        character_id = client.login(email_address)
+        character_id = api_client.login(email_address)
 
         if character_id is None:
             pass # TODO character creation
@@ -200,27 +201,15 @@ def main(stdscr):
     else:
         form = RegisterForm(stdscr)
         email_address = form.get_register_data()
-        client.register(email_address)
+        api_client.register(email_address)
 
         # TODO character creation
 
+    api_client.connect(socket_io_client.get_sid())
     curses.curs_set(False)
     menu_win, info_win, chat_win = GameLayout(stdscr).create_windows()
-    chat = Chat(stdscr, chat_win)
+    chat = Chat(stdscr, chat_win, socket_io_client)
     chat.draw()
     main_menu_loop(stdscr, menu_win, info_win, chat)
 
 wrapper(main)
-
-
-#   action_points: 16.7002
-# connected_paths: [{'cost': {'action_points': 10}, 'location_id': 'ponyland_woods', 'location_name': 'Ponyland Woods'}]
-#      created_at: Sat, 16 Feb 2019 12:06:51 GMT
-#          energy: 18.0
-#              id: e6e9c652-7b60-4aff-a6e7-85866b35be7e
-#           items: [{'amount': 6, 'category': 'consumable', 'id': 'strawberry', 'modifications': {'energy': 1}, 'name': 'Strawberry', 'rarity': 0, 'shop_price': 1}]
-#        location: {'exploration_areas': [], 'id': 'ponyland_kindergarden', 'name': 'Ponyland Kindergarden'}
-#            name: Crafter
-#         species: unicorn_pony
-#           state: alive
-#        strength: 1
