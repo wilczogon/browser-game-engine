@@ -71,8 +71,8 @@ def character_menu_loop(stdscr, menu_win, info_win, chat):
             info_lines = [
                 'Character name: {}'.format(info['name']),
                 '       Species: {}'.format(info['species']),
-                '        Energy: {}'.format(info['energy']),
-                ' Action points: {}'. format(info['action_points'])
+                '        Energy: {}/{}'.format(info['energy'], info['max_energy']),
+                ' Action points: {}/{}'. format(info['action_points'], info['max_action_points'])
             ]
             draw_on_center(info_win, info_lines)
             info_win.refresh()

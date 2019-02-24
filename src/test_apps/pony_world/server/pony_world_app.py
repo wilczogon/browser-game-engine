@@ -73,6 +73,14 @@ class Pony(Character):
     energy = Column(Float, default=20)
     max_energy = 20
 
+    def get_json_attr(self, item):
+        attr = super().get_json_attr(item)
+
+        if item in ['action_points', 'energy']:
+            return int(attr)
+        else:
+            return attr
+
 
 def action_points_renewal():
     characters = Pony.query.filter(Pony.action_points < Pony.max_action_points).all()

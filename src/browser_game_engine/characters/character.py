@@ -18,8 +18,14 @@ class Character(db.Model):
     state = Column(String(16), default=CharacterStates.ALIVE)
     location = Column(String(32), nullable=False)
 
+    def get_json_attr(self, item):
+        return self.__getattribute__(item)
+
+    def __setattr__(self, key, value):
+        super().__setattr__(key, value)
+
     def _get_json(self, engine, fields):
-        cloned = {key: self.__dict__[key] for key in self.__dict__ if not key.startswith('_') and key != 'location'}
+        cloned = {key: self.get_json_attr(key) for key in dir(self) if not key.startswith('_') and key != 'location'}
         cloned['location'] = engine.travelling.location_lookup[self.location].to_json(engine, self)
         els = list(cloned.items())
         els.append(('connected_paths', engine.travelling.get_connected_paths_json(self)))
